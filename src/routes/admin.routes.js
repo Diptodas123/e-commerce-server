@@ -1,12 +1,23 @@
 import express from 'express';
-import { handleImageUpload } from '#controllers/admin.controller.js';
+import { addProduct, deleteProduct, editProduct, fetchAllProducts, handleImageUpload } from '#controllers/admin.controller.js';
 import { upload } from '#utils/imageUpload.js';
+import { requiresRole } from '#middlewares/requiresRole.js';
+import { authMiddleware } from '#middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-//----------------- Product Routes -----------------//
+// Apply authentication middleware to all admin routes
+router.use(authMiddleware);
 
-// Image upload route 
-router.post('/products/upload-image', upload.single('image'), handleImageUpload);
+//----------------- Product Routes -----------------//
+router.post('/products', requiresRole('admin'), addProduct);
+router.put('/products/:id', requiresRole('admin'), editProduct);
+router.delete('/products/:id', requiresRole('admin'), deleteProduct);
+
+//----------------- Image Upload Route -----------------//
+router.post('/products/upload-image', requiresRole('admin'), upload.single('image'), handleImageUpload);
+
+//----------------- Fetch All Products Route -----------------//
+router.get('/products', fetchAllProducts);
 
 export default router;

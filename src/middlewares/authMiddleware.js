@@ -1,4 +1,3 @@
-import logger from "#config/logger.js";
 import { UnauthorizedError } from "#utils/errors.js";
 import { jwtToken } from "#utils/jwt.js";
 

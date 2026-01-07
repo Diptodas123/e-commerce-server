@@ -18,10 +18,14 @@ export const asyncHandler = (fn) => {
 
             // Handle operational errors (AppError instances)
             if (error instanceof AppError) {
-                return res.status(error.statusCode).json({
+                const response = {
                     status: error.status,
                     message: error.message,
-                });
+                };
+                if (error.data) {
+                    response.data = error.data;
+                }
+                return res.status(error.statusCode).json(response);
             }
 
             // Handle unexpected errors

@@ -1,10 +1,11 @@
 // Custom error class with status code
 export class AppError extends Error {
-    constructor(message, statusCode = 500) {
+    constructor(message, statusCode = 500, data = null) {
         super(message);
         this.statusCode = statusCode;
         this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
         this.isOperational = true;
+        this.data = data;
 
         Error.captureStackTrace(this, this.constructor);
     }
@@ -12,8 +13,8 @@ export class AppError extends Error {
 
 // Pre-defined error types
 export class BadRequestError extends AppError {
-    constructor(message = "Bad Request") {
-        super(message, 400);
+    constructor(message = "Bad Request", data = null) {
+        super(message, 400, data);
     }
 }
 
