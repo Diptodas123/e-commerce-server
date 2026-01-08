@@ -7,6 +7,11 @@ export const productSchema = zod.object({
     category: zod.string().min(2).max(100).trim(),
     brand: zod.string().min(2).max(100).trim(),
     price: zod.coerce.number().positive(),
-    salePrice: zod.coerce.number().positive().optional().or(zod.literal('')),
+    salePrice: zod.union([
+        zod.string().length(0),
+        zod.null(),
+        zod.undefined(),
+        zod.coerce.number().positive()
+    ]).optional(),
     totalStock: zod.coerce.number().int().nonnegative()
 });
