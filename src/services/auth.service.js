@@ -59,7 +59,12 @@ export const authenticateUser = async (res, email, password) => {
         throw new UnauthorizedError("Invalid email or password");
     }
 
-    const token = jwtToken.sign({ id: user.id, email: user.email, role: user.role });
+    const token = jwtToken.sign({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        userName: user.userName
+    });
 
     res.cookie("token", token, {
         httpOnly: true,
