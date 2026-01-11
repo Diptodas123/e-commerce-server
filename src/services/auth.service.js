@@ -60,7 +60,7 @@ export const authenticateUser = async (res, email, password) => {
     }
 
     const token = jwtToken.sign({
-        id: user.id,
+        id: user._id,
         email: user.email,
         role: user.role,
         userName: user.userName
