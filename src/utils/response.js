@@ -16,3 +16,8 @@ export const sendSuccess = (res, data, message = "Operation successful") => {
 export const sendCreated = (res, data, message = "Resource created successfully") => {
     return responseSuccess(res, data, message, 201);
 };
+
+// 404 - Not Found
+export const sendNotFound = (res, message = "Resource not found") => {
+    return responseSuccess(res, null, message, 404);
+}
