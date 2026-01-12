@@ -15,7 +15,7 @@ export const addProductToCart = async (productId, quantity, userId) => {
     if (!cart) {
         cart = new Cart({ userId, items: [{ productId, quantity }] });
     } else {
-        const itemIndex = cart.items.findIndex(item => item.productId.toString() == productId);
+        const itemIndex = cart.items.findIndex(item => item.productId._id.toString() == productId);
 
         // If product not in cart, add it. If it is, update the quantity
         if (itemIndex === -1) {
@@ -26,14 +26,72 @@ export const addProductToCart = async (productId, quantity, userId) => {
     }
 
     await cart.save();
-    return cart;
+    
+    const populatedCart = await cart.populate({
+        path: 'items.productId',
+        select: 'image title price salePrice'
+    });
+
+    // Populate product details
+    const populateCartProducts = populatedCart.items.map(item => {
+        const isValidProduct = item.productId !== null;
+        return ({
+            productId: isValidProduct ? item.productId._id : null,
+            quantity: item.quantity,
+            image: isValidProduct ? item.productId.image : null,
+            title: isValidProduct ? item.productId.title : null,
+            price: isValidProduct ? item.productId.price : null,
+            salePrice: isValidProduct ? item.productId.salePrice : null
+        })
+    });
+
+    return populateCartProducts;
 };
 
-export const removeProductFromCart = async (productId) => {
+export const removeProductFromCart = async (productId, userId) => {
+    const cart = await Cart.findOne({ userId }).populate({
+        path: 'items.productId',
+        select: 'image title price salePrice'
+    });
+
+    if (!cart) {
+        return NotFoundError("Cart not found for the user");
+    }
+
+    const itemIndex = cart.items.findIndex(item => item.productId._id.toString() == productId);
+
+    if (itemIndex === -1) {
+        return NotFoundError("Product not found in cart");
+    } else {
+        cart.items.splice(itemIndex, 1);
+    }
+
+    await cart.save();
+
+    // Repopulate cart after removal
+    await cart.populate({
+        path: 'items.productId',
+        select: 'image title price salePrice'
+    });
+
+    // Populate product details
+    const populateCartProducts = cart.items.map(item => {
+        const isValidProduct = item.productId !== null;
+        return ({
+            productId: isValidProduct ? item.productId._id : null,
+            quantity: item.quantity,
+            image: isValidProduct ? item.productId.image : null,
+            title: isValidProduct ? item.productId.title : null,
+            price: isValidProduct ? item.productId.price : null,
+            salePrice: isValidProduct ? item.productId.salePrice : null
+        })
+    });
+
+    return populateCartProducts;
 
 };
 
-export const updateProductQuantity = async (productId, quantity) => {
+export const updateProductQuantity = async (productId, quantity, userId) => {
     const cart = await Cart.findOne({ userId });
 
     // If cart doesn't exist, return not found
@@ -42,13 +100,13 @@ export const updateProductQuantity = async (productId, quantity) => {
     }
 
     // Find the index of the product in the cart
-    const itemIndex = cart.items.findIndex(item => item.productId.toString() == productId);
+    const itemIndex = cart.items.findIndex(item => item.productId._id.toString() == productId);
 
-    // If product not in cart, return not founf. If it is, update the quantity
+    // If product not in cart, return not found. If it is, update the quantity
     if (itemIndex === -1) {
         return NotFoundError("Product not found in cart");
     } else {
-        cart.items[itemIndex].quantity += quantity;
+        cart.items[itemIndex].quantity = quantity;
     }
 
     await cart.save();

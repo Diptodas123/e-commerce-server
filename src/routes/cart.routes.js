@@ -13,9 +13,9 @@ router.use(authMiddleware);
 router.use(requiresRole('user'));
 router.use(validateOwnershipMiddleware);
 
-router.post('/', addToCart);
-router.get('/', getCartItems);
-router.delete('/:id', removeFromCart);
-router.put('/:id', updateCartItemQuantity);
+router.post('/:userId', addToCart);
+router.get('/:userId', getCartItems);
+router.delete('/:productId/:userId', removeFromCart);
+router.put('/:productId/:userId', updateCartItemQuantity);
 
 export default router;
