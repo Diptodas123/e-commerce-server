@@ -29,8 +29,6 @@ export const addProductToDB = async ({
 }
 
 export const fetchAllProductsFromDB = async () => {
-    logger.info("Fetching all products from the database");
-
     const allProducts = await Product.find({});
     return allProducts
 }

@@ -26,7 +26,7 @@ export const addProductToCart = async (productId, quantity, userId) => {
     }
 
     await cart.save();
-    
+
     const populatedCart = await cart.populate({
         path: 'items.productId',
         select: 'image title price salePrice'
@@ -45,7 +45,10 @@ export const addProductToCart = async (productId, quantity, userId) => {
         })
     });
 
-    return populateCartProducts;
+    return { 
+        items: populateCartProducts, 
+        cartId: cart._id 
+    };
 };
 
 export const removeProductFromCart = async (productId, userId) => {
@@ -87,7 +90,10 @@ export const removeProductFromCart = async (productId, userId) => {
         })
     });
 
-    return populateCartProducts;
+    return {
+        items: populateCartProducts, 
+        cartId: cart._id 
+    };
 
 };
 
@@ -129,7 +135,10 @@ export const updateProductQuantity = async (productId, quantity, userId) => {
         })
     });
 
-    return populateCartProducts;
+    return {
+        items: populateCartProducts, 
+        cartId: cart._id 
+    };
 };
 
 export const getCartProductsForUser = async (userId) => {
@@ -137,6 +146,13 @@ export const getCartProductsForUser = async (userId) => {
         path: 'items.productId',
         select: 'image title price salePrice'
     });
+
+    if( !cartProducts ) {
+        return {
+            items: [],
+            cartId: null
+        };
+    }
 
     // Clean up any invalid product references if deleted by admin
     const validProducts = cartProducts?.items.filter(item => item.productId !== null) || [];
@@ -156,5 +172,8 @@ export const getCartProductsForUser = async (userId) => {
         salePrice: item.productId.salePrice
     }));
 
-    return populateCartProducts;
+    return {
+        items: populateCartProducts,
+        cartId: cartProducts?._id
+    };
 };

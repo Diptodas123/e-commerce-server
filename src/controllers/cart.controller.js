@@ -11,7 +11,7 @@ export const addToCart = asyncHandler(async (req, res) => {
     }
     const newCartItem = await addProductToCart(productId, quantity, req.user.id);
 
-    return sendCreated(res, newCartItem, "Product added to cart successfully");
+    return sendCreated(res, {items: newCartItem.items, cartId: newCartItem.cartId}, "Product added to cart successfully");
 });
 
 export const getCartItems = asyncHandler(async (req, res) => {
@@ -20,7 +20,7 @@ export const getCartItems = asyncHandler(async (req, res) => {
         return NotFoundError("No cart items found for the user");
     }
 
-    return sendSuccess(res, allCartItems, "Cart items retrieved successfully");
+    return sendSuccess(res, {items: allCartItems.items, cartId: allCartItems.cartId}, "Cart items retrieved successfully");
 });
 
 export const removeFromCart = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ export const removeFromCart = asyncHandler(async (req, res) => {
 
     const removedCartItem = await removeProductFromCart(productId, req.user.id);
 
-    return sendSuccess(res, removedCartItem, "Product removed from cart successfully");
+    return sendSuccess(res, {items: removedCartItem.items, cartId: removedCartItem.cartId}, "Product removed from cart successfully");
 });
 
 export const updateCartItemQuantity = asyncHandler(async (req, res) => {
@@ -48,5 +48,5 @@ export const updateCartItemQuantity = asyncHandler(async (req, res) => {
         return NotFoundError("Unable to update cart item quantity");
     }
 
-    return sendSuccess(res, updatedCartItem, "Cart item quantity updated successfully");
+    return sendSuccess(res, {items: updatedCartItem.items, cartId: updatedCartItem.cartId}, "Cart item quantity updated successfully");
 });
