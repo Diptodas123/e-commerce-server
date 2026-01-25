@@ -164,3 +164,17 @@ export const fetchOrderByDetailsForAdminFromDB = async (orderId) => {
 
     return order;
 };
+
+export const updateOrderStatusInDB = async (orderId, status) => {
+    const order = await Order.findByIdAndUpdate(
+        orderId,
+        { orderStatus: status },
+        { new: true }
+    );
+
+    if (!order) {
+        throw new NotFoundError('Order not found');
+    }
+
+    return order;
+};

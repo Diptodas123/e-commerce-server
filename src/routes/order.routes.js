@@ -4,7 +4,8 @@ import {
     getAllOrdersByUser,
     getOrderByDetails,
     fetchAllOrdersForAdmin,
-    getOrderByDetailsForAdmin
+    getOrderByDetailsForAdmin,
+    updateOrderStatus
 } from "#controllers/order.controller.js";
 import express from "express";
 import { requiresRole } from '#middlewares/requiresRole.js';
@@ -17,8 +18,19 @@ const router = express.Router();
 router.use(authMiddleware);
 
 // -------- Admin Routes --------
-router.get("/admin/orders", requiresRole('admin'), fetchAllOrdersForAdmin);
-router.get("/admin/order-details/:id", requiresRole('admin'), getOrderByDetailsForAdmin);
+router
+    .get("/admin/orders",
+        requiresRole('admin'),
+        fetchAllOrdersForAdmin
+    )
+    .get("/admin/order-details/:id",
+        requiresRole('admin'),
+        getOrderByDetailsForAdmin
+    )
+    .put("/admin/update-order-status/:id",
+        requiresRole('admin'),
+        updateOrderStatus
+    );
 
 // ------------------------------------------------------------------------
 

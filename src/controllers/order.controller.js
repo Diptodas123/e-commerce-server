@@ -5,7 +5,8 @@ import {
     fetchAllOrdersByUserFromDB,
     fetchOrderByDetailsFromDB,
     fetchAllOrdersFromDB,
-    fetchOrderByDetailsForAdminFromDB
+    fetchOrderByDetailsForAdminFromDB,
+    updateOrderStatusInDB
 } from "#services/order.service.js";
 import { BadRequestError } from "#utils/errors.js";
 import { sendCreated, sendSuccess } from "#utils/response.js";
@@ -68,3 +69,13 @@ export const getOrderByDetailsForAdmin = asyncHandler(async (req, res) => {
     const order = await fetchOrderByDetailsForAdminFromDB(orderId);
     return sendSuccess(res, order, `Fetched order ${orderId} for admin successfully`);
 });
+
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+    const orderId = req.params.id;    
+    const { status } = req.body;
+
+    const order = await updateOrderStatusInDB(orderId, status);
+
+    return sendSuccess(res, order, `Order ${orderId} status updated to ${status} successfully`);
+});
+
