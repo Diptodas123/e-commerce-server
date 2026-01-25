@@ -1,5 +1,12 @@
 import { asyncHandler } from "#middlewares/errorHandler.js";
-import { capturePaypalPayment, createNewOrderInDB, fetchAllOrdersByUserFromDB, fetchOrderByDetailsFromDB } from "#services/order.service.js";
+import {
+    capturePaypalPayment,
+    createNewOrderInDB,
+    fetchAllOrdersByUserFromDB,
+    fetchOrderByDetailsFromDB,
+    fetchAllOrdersFromDB,
+    fetchOrderByDetailsForAdminFromDB
+} from "#services/order.service.js";
 import { BadRequestError } from "#utils/errors.js";
 import { sendCreated, sendSuccess } from "#utils/response.js";
 import { orderSchema, capturePaymentSchema } from "#validations/order.validation.js"
@@ -45,7 +52,19 @@ export const getAllOrdersByUser = asyncHandler(async (req, res) => {
 export const getOrderByDetails = asyncHandler(async (req, res) => {
     const orderId = req.params.id;
     const userId = req.user.id;
-    
+
     const order = await fetchOrderByDetailsFromDB(orderId, userId);
     return sendSuccess(res, order, `Fetched order ${orderId} successfully`);
+});
+
+export const fetchAllOrdersForAdmin = asyncHandler(async (req, res) => {
+    const orders = await fetchAllOrdersFromDB();
+    return sendSuccess(res, orders, 'Fetched all orders for admin successfully');
+});
+
+export const getOrderByDetailsForAdmin = asyncHandler(async (req, res) => {
+    const orderId = req.params.id;
+
+    const order = await fetchOrderByDetailsForAdminFromDB(orderId);
+    return sendSuccess(res, order, `Fetched order ${orderId} for admin successfully`);
 });

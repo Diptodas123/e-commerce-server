@@ -3,7 +3,7 @@ import { Cart } from "#models/Cart.js";
 import paypalOrdersController from "#config/paypal.js";
 import logger from "#config/logger.js";
 import { convertINRtoUSD } from "#utils/currencyConverter.js";
-import { NotFoundError, UnauthorizedError, BadRequestError } from "#utils/errors.js";
+import { NotFoundError, BadRequestError } from "#utils/errors.js";
 
 export const createNewOrderInDB = async (orderData, userId) => {
 
@@ -141,6 +141,23 @@ export const fetchAllOrdersByUserFromDB = async (userId) => {
 export const fetchOrderByDetailsFromDB = async (orderId, userId) => {
     const order = await Order.findOne({ _id: orderId, userId });
 
+    if (!order) {
+        throw new NotFoundError('Order not found');
+    }
+
+    return order;
+};
+
+export const fetchAllOrdersFromDB = async () => {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    if (!orders) {
+        throw new NotFoundError('No orders found');
+    }
+    return orders;
+};
+
+export const fetchOrderByDetailsForAdminFromDB = async (orderId) => {
+    const order = await Order.findById(orderId).populate('userId', 'userName email');
     if (!order) {
         throw new NotFoundError('Order not found');
     }

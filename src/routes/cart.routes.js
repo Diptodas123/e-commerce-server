@@ -13,9 +13,10 @@ router.use(authMiddleware);
 router.use(requiresRole('user'));
 router.use(validateOwnershipMiddleware);
 
-router.post('/:userId', addToCart);
-router.get('/:userId', getCartItems);
-router.delete('/:productId/:userId', removeFromCart);
-router.put('/:productId/:userId', updateCartItemQuantity);
+router
+    .post('/:userId', addToCart)
+    .get('/:userId', getCartItems)
+    .delete('/:productId/:userId', removeFromCart)
+    .put('/:productId/:userId', updateCartItemQuantity);
 
 export default router;

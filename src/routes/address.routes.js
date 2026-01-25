@@ -14,9 +14,10 @@ const router = express.Router();
 // Apply authentication and authorization middlewares
 router.use(authMiddleware, requiresRole("user"), validateOwnershipMiddleware);
 
-router.post("/:userId", addAddress);
-router.get("/:userId", fetchAllAddresses);
-router.put("/:userId/:addressId", editAddress);
-router.delete("/:userId/:addressId", deleteAddress);
+router
+    .post("/:userId", addAddress)
+    .get("/:userId", fetchAllAddresses)
+    .put("/:userId/:addressId", editAddress)
+    .delete("/:userId/:addressId", deleteAddress);
 
 export default router;

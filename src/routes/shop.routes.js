@@ -5,7 +5,8 @@ const router = express.Router();
 
 //------------ Product Routes ------------//
 
-router.get('/products', getFilteredProducts);
-router.get('/products/:id', getProductDetails);
+router
+    .get('/products', getFilteredProducts)
+    .get('/products/:id', getProductDetails);
 
 export default router;

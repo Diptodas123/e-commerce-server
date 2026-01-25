@@ -10,9 +10,10 @@ const router = express.Router();
 router.use(authMiddleware);
 
 //----------------- Product Routes -----------------//
-router.post('/products', requiresRole('admin'), addProduct);
-router.put('/products/:id', requiresRole('admin'), editProduct);
-router.delete('/products/:id', requiresRole('admin'), deleteProduct);
+router
+    .post('/products', requiresRole('admin'), addProduct)
+    .put('/products/:id', requiresRole('admin'), editProduct)
+    .delete('/products/:id', requiresRole('admin'), deleteProduct);
 
 //----------------- Image Upload Route -----------------//
 router.post('/products/upload-image', requiresRole('admin'), upload.single('image'), handleImageUpload);
