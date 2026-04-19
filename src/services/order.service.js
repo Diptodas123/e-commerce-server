@@ -4,6 +4,7 @@ import paypalOrdersController from "#config/paypal.js";
 import logger from "#config/logger.js";
 import { convertINRtoUSD } from "#utils/currencyConverter.js";
 import { NotFoundError, BadRequestError } from "#utils/errors.js";
+import { Product } from "#models/Product.js";
 
 export const createNewOrderInDB = async (orderData, userId) => {
 
@@ -94,6 +95,14 @@ export const capturePaypalPayment = async (paymentId, payerId, orderId) => {
 
     await order.save();
 
+    const productsPurchased = order.cartItems.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+    }));
+
+    // Update stock for purchased products
+    await updateStockAfterPurchase(productsPurchased);
+
     return order;
 };
 
@@ -177,4 +186,27 @@ export const updateOrderStatusInDB = async (orderId, status) => {
     }
 
     return order;
+};
+
+const updateStockAfterPurchase = async (productsPurchased) => {
+    const updatePromises = productsPurchased.map(async (item) => {
+        const product = await Product.findOneAndUpdate(
+            { 
+                _id: item.productId,
+                totalStock: { $gte: item.quantity } // Ensure sufficient stock exists
+            },
+            { $inc: { totalStock: -item.quantity } },
+            { new: true, runValidators: true }
+        );
+
+        if (!product) {
+            logger.warn(`Product not found or insufficient stock: ${item.productId}`);
+            throw new BadRequestError(`Insufficient stock for product ${item.productId}`);
+        }
+
+        logger.info(`Stock updated for product ${item.productId}: ${product.totalStock}`);
+        return product;
+    });
+
+    await Promise.all(updatePromises);
 };
