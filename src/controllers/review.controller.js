@@ -4,7 +4,7 @@ import {
 } from '#services/review.service.js';
 import { asyncHandler } from "#middlewares/errorHandler.js";
 import { BadRequestError, InternalServerError } from "#utils/errors.js";
-import { responseSuccess } from "#utils/response.js";
+import { responseSuccess, sendCreated } from "#utils/response.js";
 import { createReviewSchema } from '#validations/review.validation.js';
 
 const addProductReview = asyncHandler(async (req, res) => {
@@ -18,7 +18,7 @@ const addProductReview = asyncHandler(async (req, res) => {
         throw new InternalServerError('Failed to add review');
     }
 
-    return responseSuccess(res, newReview, 'Review added successfully');
+    return sendCreated(res, newReview, 'Review added successfully');
 });
 
 const getProductReviews = asyncHandler(async (req, res) => {
@@ -27,8 +27,8 @@ const getProductReviews = asyncHandler(async (req, res) => {
         throw new BadRequestError('Product ID is required');
     }
 
-    const reviews = await getProductReviewsFromDatabase(productId);
-    return responseSuccess(res, reviews, 'Product reviews fetched successfully');
+    const result = await getProductReviewsFromDatabase(productId);
+    return responseSuccess(res, result, 'Product reviews fetched successfully');
 });
 
 export { addProductReview, getProductReviews };

@@ -1,6 +1,7 @@
 import { ProductReview } from '#models/Reviews.js';
 import { Order } from '#models/Order.js';
 import { BadRequestError } from '#utils/errors.js';
+import mongoose from 'mongoose';
 
 const addProductReviewInDatabase = async ({ productId, userId, reviewText, rating }) => {
 
@@ -32,26 +33,34 @@ const addProductReviewInDatabase = async ({ productId, userId, reviewText, ratin
 
     await newReview.save();
 
-    const averageRatingAggregation = await ProductReview.aggregate([
-        { $match: { productId: newReview.productId } },
-        {
-            $group: {
-                _id: '$productId',
-                averageRating: { $avg: '$rating' },
-                totalReviews: { $sum: 1 }
-            }
-        }
-    ]);
-
     return newReview;
 }
 
 const getProductReviewsFromDatabase = async (productId) => {
-    const productReviews = await ProductReview.find({ productId }).populate({
-        path: 'userId',
-        select: 'userName'
-    });
-    return productReviews;
+    const [reviews, stats] = await Promise.all([
+        ProductReview.find({ productId }).populate({ path: 'userId', select: 'userName' }).lean(),
+        ProductReview.aggregate([
+            { $match: { productId: new mongoose.Types.ObjectId(productId) } },
+            {
+                $group: {
+                    _id: '$productId',
+                    averageRating: { $avg: '$rating' },
+                    totalReviews: { $sum: 1 }
+                }
+            }
+        ])
+    ]);
+
+    const averageRating = stats.length > 0 ? stats[0].averageRating.toFixed(2) : 0;
+    const totalReviews = stats.length > 0 ? stats[0].totalReviews : 0;
+
+    const flatReviews = reviews.map(({ userId, ...rest }) => ({
+        ...rest,
+        userName: userId?.userName ?? null,
+    }));
+
+    return { reviews: flatReviews, averageRating, totalReviews };
+
 }
 
 export { addProductReviewInDatabase, getProductReviewsFromDatabase };

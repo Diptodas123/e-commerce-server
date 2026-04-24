@@ -49,7 +49,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     return responseSuccess(res, null, "Logout successful", 200);
 });
 
-export const checkUserAuth = asyncHandler((req, res) => {
+export const userInfo = asyncHandler((req, res) => {
     const user = req.user;
     return sendSuccess(res, user, "User is authenticated", 200);
 });

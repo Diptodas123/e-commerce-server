@@ -11,6 +11,7 @@ import addressRoutes from '#routes/address.routes.js';
 import orderRoutes from '#routes/order.routes.js';
 import searchRoutes from '#routes/search.routes.js';
 import reviewRoutes from '#routes/review.routes.js';
+import featureRoutes from '#routes/feature.routes.js';
 
 export const app = express();
 
@@ -29,5 +30,6 @@ app.use('/api/address', addressRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/feature-images', featureRoutes);
 
 export default app;

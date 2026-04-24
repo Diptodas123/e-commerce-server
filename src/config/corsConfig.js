@@ -1,5 +1,5 @@
 export const corsConfig = {
-    "origin": "http://localhost:5173",
+    "origin": process.env.CLIENT_URL || 'http://localhost:5173',
     "methods": ["GET", "HEAD", "PUT", "POST", "DELETE"],
     allowedHeaders: [
         "Content-Type",
