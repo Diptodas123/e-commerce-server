@@ -15,8 +15,21 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 
-// Relax CSP for Swagger UI
-app.use('/api/docs', helmet({ contentSecurityPolicy: false }));
+// Custom CSP for Swagger UI (keep CSP enabled)
+app.use('/api/docs', helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:"],
+            fontSrc: ["'self'", "data:"],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            frameAncestors: ["'none'"],
+        },
+    },
+}));
 app.use((req, res, next) => {
     logger.info(`${req.method} - ${req.originalUrl} - ${req.ip}`);
     logger.info(`Request body: ${JSON.stringify(req.body && req.body.password
