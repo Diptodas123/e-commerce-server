@@ -1,6 +1,8 @@
+const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+
 export const corsConfig = {
-    "origin": process.env.CLIENT_URL || 'http://localhost:5173',
-    "methods": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "origin": clientUrl,
+    "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     allowedHeaders: [
         "Content-Type",
         "Authorization",
