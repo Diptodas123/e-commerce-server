@@ -133,8 +133,8 @@ const buildPayPalOrderRequest = (cartItemsWithUSD, totalAmountUSD) => {
             }
         ],
         applicationContext: {
-            returnUrl: 'http://localhost:5173/shop/payment-success',
-            cancelUrl: 'http://localhost:5173/shop/payment-cancel',
+            returnUrl: `${(process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '')}/shop/payment-success`,
+            cancelUrl: `${(process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '')}/shop/payment-cancel`,
             brandName: 'E-Commerce Store',
             landingPage: 'NO_PREFERENCE',
             userAction: 'PAY_NOW'
