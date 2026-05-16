@@ -51,5 +51,8 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 export const userInfo = asyncHandler((req, res) => {
     const user = req.user;
+    if(!user){
+        throw new UnauthorizedError("User is not authenticated");
+    }
     return sendSuccess(res, user, "User is authenticated", 200);
 });
