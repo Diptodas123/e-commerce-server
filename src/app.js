@@ -6,6 +6,7 @@ import { corsConfig } from '#config/corsConfig.js';
 import helmet from 'helmet';
 import logger from '#config/logger.js';
 import { registerRoutes } from '#routes/index.js';
+import { globalErrorHandler } from '#middlewares/errorHandler.js';
 
 export const app = express();
 
@@ -44,5 +45,8 @@ connectToDatabase();
 
 // Routes
 registerRoutes(app);
+
+// Global error handler
+app.use(globalErrorHandler);
 
 export default app;

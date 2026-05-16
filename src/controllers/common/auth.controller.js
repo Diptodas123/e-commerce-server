@@ -1,6 +1,6 @@
 import { responseSuccess, sendSuccess } from "#utils/response.js";
 import { asyncHandler } from "#middlewares/errorHandler.js";
-import { BadRequestError } from "#utils/errors.js";
+import { BadRequestError, UnauthorizedError } from "#utils/errors.js";
 import logger from "#config/logger.js";
 import { registerUserInDB, authenticateUser } from "#services/common/auth.service.js";
 import { loginSchema, registerSchema } from "#validations/auth.validation.js";

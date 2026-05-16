@@ -5,13 +5,13 @@ export const authMiddleware = (req, res, next) => {
     const token = req.cookies?.token || req.headers?.authorization?.split(" ")[1];
 
     if (!token) {
-        throw new UnauthorizedError("Authentication token is missing");
+        return next(new UnauthorizedError("Authentication token is missing"));
     }
 
     const decoded = jwtToken.verify(token);
     
     if (!decoded) {
-        throw new UnauthorizedError("Invalid or expired authentication token");
+        return next(new UnauthorizedError("Invalid or expired authentication token"));
     }
     
     req.user = {
